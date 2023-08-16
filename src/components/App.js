@@ -1,7 +1,5 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-
-const todoDataUrl = "http://localhost:3100/todos";
+import React, { useRef } from "react";
+import { useTodo } from "../hooks/useTodo";
 
 const TodoTitle = ({ title, as }) => {
   if (as === "h1") return <h1>{title}</h1>;
@@ -9,35 +7,63 @@ const TodoTitle = ({ title, as }) => {
   return <p>{title}</p>;
 };
 
-const TodoItem = ({ todo }) => {
+const TodoItem = ({ todo, toggleTodoListItemStatus, deleteTodoListItem }) => {
+  const handleToggleTodoListItemStatus = () =>
+    toggleTodoListItemStatus(todo.id, todo.done);
+  const handleDeleteTodoListItem = () => deleteTodoListItem(todo.id);
+
   return (
     <li>
       {todo.content}
-      <button>{todo.done ? "未完了リストへ" : "完了リストへ"}</button>
-      <button>削除</button>
+      <button onClick={handleToggleTodoListItemStatus}>
+        {todo.done ? "未完了リストへ" : "完了リストへ"}
+      </button>
+      <button onClick={handleDeleteTodoListItem}>削除</button>
     </li>
   );
 };
 
-const TodoList = ({ todoList }) => {
+const TodoList = ({
+  todoList,
+  toggleTodoListItemStatus,
+  deleteTodoListItem,
+}) => {
   return (
     <ul>
       {todoList.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          toggleTodoListItemStatus={toggleTodoListItemStatus}
+          deleteTodoListItem={deleteTodoListItem}
+        />
       ))}
     </ul>
   );
 };
 
+const TodoAdd = ({ inputEl, handleAddTodoListItem }) => {
+  return (
+    <>
+      <textarea ref={inputEl} />
+      <button onClick={handleAddTodoListItem}>+ TODOを追加</button>
+    </>
+  );
+};
+
 function App() {
-  const [todoList, setTodoList] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get(todoDataUrl);
-      setTodoList(response.data);
-    };
-    fetchData();
-  }, []);
+  const {
+    todoList,
+    addTodoListItem,
+    toggleTodoListItemStatus,
+    deleteTodoListItem,
+  } = useTodo();
+  const inputEl = useRef(null);
+  const handleAddTodoListItem = () => {
+    if (inputEl.current.value === "") return;
+    addTodoListItem(inputEl.current.value);
+    inputEl.current.value = "";
+  };
 
   console.log("TODOリスト：", todoList);
 
@@ -45,20 +71,29 @@ function App() {
     return !todo.done;
   });
 
-  console.log("未完了TODOリスト：", inCompletedList);
   const completedList = todoList.filter((todo) => {
     return todo.done;
   });
 
   return (
     <>
-      <todoTitle title="TODO進捗管理" as="h1" />
-      <textarea />
-      <button>+ TODOを追加</button>
+      <TodoTitle title="TODO進捗管理" as="h1" />
+      <TodoAdd
+        inputEl={inputEl}
+        handleAddTodoListItem={handleAddTodoListItem}
+      />
       <TodoTitle title="未完了TODOリスト" as="h2" />
-      <TodoList todoList={inCompletedList} />
+      <TodoList
+        todoList={inCompletedList}
+        toggleTodoListItemStatus={toggleTodoListItemStatus}
+        deleteTodoListItem={deleteTodoListItem}
+      />
       <TodoTitle title="完了TODOリスト" as="h2" />
-      <TodoList todoList={completedList} />
+      <TodoList
+        todoList={completedList}
+        toggleTodoListItemStatus={toggleTodoListItemStatus}
+        deleteTodoListItem={deleteTodoListItem}
+      />
     </>
   );
 }
