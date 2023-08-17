@@ -3,15 +3,21 @@ import { ulid } from "ulid";
 
 import * as todoData from "../apis/todos";
 
+interface Todo {
+  id: string;
+  content: string;
+  done: boolean;
+}
+
 export const useTodo = () => {
-  const [todoList, setTodoList] = useState([]);
+  const [todoList, setTodoList] = useState<Todo[]>([]);
   useEffect(() => {
     todoData.getAllTodosData().then((todo) => {
       setTodoList([...todo].reverse());
     });
   }, []);
 
-  const toggleTodoListItemStatus = (id, done) => {
+  const toggleTodoListItemStatus = (id: string, done: boolean) => {
     const todoItem = todoList.find((item) => item.id === id);
     const newTodoItem = { ...todoItem, done: !done };
     todoData.updateTodoData(id, newTodoItem).then((updatedTodo) => {
@@ -22,23 +28,21 @@ export const useTodo = () => {
     });
   };
 
-  const addTodoListItem = (todoContent) => {
-    const newTodoItem = {
+  const addTodoListItem = (todoContent: string) => {
+    const newTodoItem: Todo = {
       content: todoContent,
       id: ulid(),
       done: false,
     };
 
-    return todoData.addTodoData(newTodoItem).then((addTodo) => {
+    addTodoData(newTodoItem).then((addTodo) => {
       setTodoList([addTodo, ...todoList]);
     });
   };
 
-  const deleteTodoListItem = (id) => {
-    todoData.deleteTodoData(id).then((deleteListItemId) => {
-      const newTodoList = todoList.filter(
-        (item) => item.id !== deleteListItemId
-      );
+  const deleteTodoListItem = (id: number) => {
+    deleteTodoData(id).then(() => {
+      const newTodoList = todoList.filter((item) => item.id !== id);
       setTodoList(newTodoList);
     });
   };
