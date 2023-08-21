@@ -12,12 +12,12 @@ function App() {
     deleteTodoListItem,
   } = useTodo();
 
-  const inputEl = useRef(null);
+  const inputEl = useRef<HTMLTextAreaElement>(null);
 
   const handleAddTodoListItem = () => {
-    if (inputEl.current.value === "") return;
-    addTodoListItem(inputEl.current.value);
-    inputEl.current.value = "";
+    if (inputEl.current?.value === "") return;
+    addTodoListItem(inputEl.current!.value);
+    inputEl.current!.value = "";
   };
 
   console.log("TODOリスト：", todoList);

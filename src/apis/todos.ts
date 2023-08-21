@@ -1,10 +1,5 @@
 import axios from "axios";
-
-interface Todo {
-  id: number;
-  content: string;
-  done: boolean;
-}
+import { Todo } from "../type/TodoType";
 
 const todoDataUrl = "http://localhost:3100/todos";
 
@@ -18,12 +13,12 @@ export const addTodoData = async (todo: Todo): Promise<Todo> => {
   return response.data;
 };
 
-export const deleteTodoData = async (id: number): Promise<Todo> => {
+export const deleteTodoData = async (id: string): Promise<Todo> => {
   const response = await axios.delete<Todo>(`${todoDataUrl}/${id}`);
   return response.data;
 };
 
-export const updateTodoData = async (id: number, todo: Todo): Promise<Todo> => {
+export const updateTodoData = async (id: string, todo: Todo): Promise<Todo> => {
   const response = await axios.put<Todo>(`${todoDataUrl}/${id}`, todo);
   return response.data;
 };

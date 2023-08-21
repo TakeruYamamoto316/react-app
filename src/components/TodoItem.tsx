@@ -1,15 +1,10 @@
 import React from "react";
-
-interface Todo {
-  id: number;
-  content: string;
-  done: boolean;
-}
+import { Todo } from "../type/TodoType";
 
 interface TodoItemProps {
   todo: Todo;
-  toggleTodoListItemStatus: (id: number, done: boolean) => void;
-  deleteTodoListItem: (id: number) => void;
+  toggleTodoListItemStatus: (id: string, done: boolean) => void;
+  deleteTodoListItem: (id: string) => void;
 }
 
 export const TodoItem: React.FC<TodoItemProps> = ({
