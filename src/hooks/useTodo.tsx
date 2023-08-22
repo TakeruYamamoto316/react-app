@@ -1,20 +1,28 @@
 import { useState, useEffect } from "react";
 import { ulid } from "ulid";
 import { Todo } from "../type/TodoType";
-import { addTodoData, deleteTodoData } from "../apis/todos";
+import {
+  getAllTodosData,
+  addTodoData,
+  deleteTodoData,
+  updateTodoData,
+} from "../apis/todos";
 
 export const useTodo = () => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
   useEffect(() => {
-    todoData.getAllTodosData().then((todo: Todo[]) => {
+    getAllTodosData().then((todo: Todo[]) => {
       setTodoList([...todo].reverse());
     });
   }, []);
 
   const toggleTodoListItemStatus = (id: string, done: boolean) => {
     const todoItem = todoList.find((item) => item.id === id);
-    const newTodoItem = { ...todoItem, done: !done };
-    todoData.updateTodoData(id, newTodoItem).then((updatedTodo: Todo) => {
+    if (!todoItem) {
+      return;
+    }
+    const newTodoItem: Todo = { ...todoItem, done: !done };
+    updateTodoData(id, newTodoItem).then((updatedTodo: Todo) => {
       const newTodoList = todoList.map((item) =>
         item.id !== updatedTodo.id ? item : updatedTodo
       );

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 
 interface TodoAddProps {
   buttonText: string;
@@ -9,9 +9,8 @@ interface TodoAddProps {
 export const TodoAdd: React.FC<TodoAddProps> = ({
   buttonText,
   handleAddTodoListItem,
+  inputEl,
 }) => {
-  const inputEl = useRef<HTMLTextAreaElement>(null);
-
   return (
     <>
       <textarea ref={inputEl} />
